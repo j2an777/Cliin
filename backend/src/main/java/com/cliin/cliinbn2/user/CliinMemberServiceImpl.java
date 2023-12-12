@@ -63,10 +63,8 @@ public class CliinMemberServiceImpl implements CliinMemberService {
                     .contents(cliinMissionDto.getContents())
                     .build();
 
-            // DB에 저장
             missionJpaRepository.save(uploadList);
 
-            // 사용자 포인트 업데이트
             User user = userJpaRepository.findByUserId(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
             user.setPoint(user.getPoint() + 50);
@@ -74,7 +72,6 @@ public class CliinMemberServiceImpl implements CliinMemberService {
 
             return uploadList;
         } catch (Exception e) {
-            // 에러 처리
             e.printStackTrace();
             throw new MultipartException("파일 업로드에 실패했습니다.");
         }
@@ -86,10 +83,8 @@ public class CliinMemberServiceImpl implements CliinMemberService {
 
     public Article articleUpload(CliinArticleDto cliinArticleDto, String userId) {
         try {
-            // 파일 저장 및 파일명 가져오기
             String fileName = fileStorageService.storeFile2(cliinArticleDto.getMultipartFile());
 
-            // 이미지 경로 설정 (역슬래시 대신 슬래시로 변경)
             String imageUrl = "/articleImg/" + fileName;
 
             Article uploadList = Article.builder()
@@ -100,12 +95,19 @@ public class CliinMemberServiceImpl implements CliinMemberService {
                     .content(cliinArticleDto.getContent())
                     .build();
 
-            // DB에 저장
             articleJpaRepository.save(uploadList);
 
             User user = userJpaRepository.findByUserId(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            user.setExperience(user.getExperience() + 20);
+            int newExperience = user.getExperience() + 20;
+
+            if (newExperience >= 100) {
+                user.setExperience(0);
+                user.setLevel(user.getLevel() + 1);
+            } else {
+                user.setExperience(newExperience);
+            }
+
             userJpaRepository.save(user);
 
             return uploadList;
