@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
+
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,9 +52,54 @@ public class CliinMemberController {
         return "redirect:/";
     }
 
-    @PostMapping("/missionupload")
-    public Mission missionUpload(@RequestBody CliinMissionDto cliinMissionDto) {
-        return cliinMemberService.upload(cliinMissionDto);
+    @PostMapping("/missionUpload")
+    public Mission missionUpload(@RequestPart("multipartFile") MultipartFile multipartFile,
+                                 @RequestPart("title") String title,
+                                 @RequestPart("hashtag") String hashtag,
+                                 @RequestPart("content") String content) {
+
+        String userId = sessionManager.getUserIdFromSession();
+        CliinMissionDto missionDto = new CliinMissionDto();
+        missionDto.setTitle(title);
+        missionDto.setHashtag(hashtag);
+        missionDto.setContents(content);
+        missionDto.setMultipartFile(multipartFile);
+
+        return cliinMemberService.upload(missionDto, userId);
+    }
+
+    @GetMapping("/missionboard")
+    public List<Mission> missionBoard() {
+        return cliinMemberService.getAllMissions();
+    }
+
+    @PostMapping("/articleUpload")
+    public Article articleUpload(@RequestPart("multipartFile") MultipartFile multipartFile,
+                                 @RequestPart("title") String title,
+                                 @RequestPart("subtitle") String subtitle,
+                                 @RequestPart("hashtag") String hashtag,
+                                 @RequestPart("content") String content) {
+
+        String userId = sessionManager.getUserIdFromSession();
+        CliinArticleDto articleDto = new CliinArticleDto();
+        articleDto.setTitle(title);
+        articleDto.setSubtitle(subtitle);
+        articleDto.setHashtag(hashtag);
+        articleDto.setContent(content);
+        articleDto.setMultipartFile(multipartFile);
+
+        return cliinMemberService.articleUpload(articleDto, userId);
+    }
+
+    @GetMapping("/scriptboard")
+    public List<Article> articleBoard() {
+        return cliinMemberService.getAllArticles();
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<CliinProfileDto> profile(@PathVariable("userId") String userId) {
+        CliinProfileDto cliinProfileDto = cliinMemberService.getProfile(userId);
+        return ResponseEntity.ok(cliinProfileDto);
     }
 
 }

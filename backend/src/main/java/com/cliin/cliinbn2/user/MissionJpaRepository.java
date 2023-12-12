@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface MissionJpaRepository extends JpaRepository<Mission, String> {
+public interface MissionJpaRepository extends JpaRepository<Mission, Long> {
 
-    Optional<Mission> findById(String Id);
+
 }
