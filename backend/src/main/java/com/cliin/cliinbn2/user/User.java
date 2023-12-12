@@ -35,4 +35,7 @@ public class User {
 
     @Column(name = "c_level", nullable = false)
     Integer level;
+
+    @Column(name = "c_point", nullable = false)
+    Integer point;
 }

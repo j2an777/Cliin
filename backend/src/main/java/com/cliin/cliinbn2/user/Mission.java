@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity(name = "cln_mission")
 public class Mission {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(name = "c_title", nullable = false)
@@ -25,6 +25,10 @@ public class Mission {
     @Column(name = "c_contents", nullable = false)
     String contents;
 
-    @Column(name = "c_img", nullable = false)
+    @Column(name = "c_imgurl", nullable = false)
     String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "c_user_id", referencedColumnName = "c_id")
+    private User user;
 }
