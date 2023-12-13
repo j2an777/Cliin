@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartException;
 
 import java.util.List;
@@ -56,17 +55,19 @@ public class CliinMemberServiceImpl implements CliinMemberService {
 
             String imageUrl = "/missionImg/" + fileName;
 
+            User user = userJpaRepository.findByUserId(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
             Mission uploadList = Mission.builder()
                     .title(cliinMissionDto.getTitle())
                     .hashtag(cliinMissionDto.getHashtag())
                     .imageUrl(imageUrl)
                     .contents(cliinMissionDto.getContents())
+                    .user(user)
                     .build();
 
             missionJpaRepository.save(uploadList);
 
-            User user = userJpaRepository.findByUserId(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             user.setPoint(user.getPoint() + 50);
             userJpaRepository.save(user);
 
@@ -87,18 +88,20 @@ public class CliinMemberServiceImpl implements CliinMemberService {
 
             String imageUrl = "/articleImg/" + fileName;
 
+            User user = userJpaRepository.findByUserId(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
             Article uploadList = Article.builder()
                     .title(cliinArticleDto.getTitle())
                     .subtitle(cliinArticleDto.getSubtitle())
                     .hashtag(cliinArticleDto.getHashtag())
                     .imageUrl(imageUrl)
                     .content(cliinArticleDto.getContent())
+                    .user(user)
                     .build();
 
             articleJpaRepository.save(uploadList);
 
-            User user = userJpaRepository.findByUserId(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
             int newExperience = user.getExperience() + 20;
 
             if (newExperience >= 100) {
