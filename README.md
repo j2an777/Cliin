@@ -1,2 +1,2 @@
 # Cliin
-<video src="https://www.youtube.com/watch?v=beBnQ_L4n5o" />
+[![Video Label](http://img.youtube.com/vi/beBnQ_L4n5o/0.jpg)](https://youtu.be/beBnQ_L4n5o)
